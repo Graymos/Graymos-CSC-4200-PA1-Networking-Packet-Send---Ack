@@ -67,8 +67,8 @@ def unpack_packet(conn, header_format):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Server for packet receiving and ACKing.")
-    parser.add_argument('--host', type=str, default='localhost', help='Server host')
-    parser.add_argument('--port', type=int, default=12345, help='Server port')
+    parser.add_argument('--host', type=str, default='localhost', help='Client host')
+    parser.add_argument('--port', type=int, default=12345, help='Client port')
     args = parser.parse_args()
 
 
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     header_format = 'BBBB'  # 1 byte for version, header length, service type; 2 bytes for payload length
 while True:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((args.host, args.port))
+        s.bind(args.host, args.port)
         s.listen()
         conn, addr = s.accept()
         with conn:
