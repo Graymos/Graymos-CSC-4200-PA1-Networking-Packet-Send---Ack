@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     # Connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(args.host, args.port)
+        s.connect((args.host, args.port))
 
         # Send the packet
         s.sendall(packet)

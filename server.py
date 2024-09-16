@@ -76,7 +76,7 @@ if __name__ == '__main__':
     header_format = 'BBBB'  # 1 byte for version, header length, service type; 2 bytes for payload length
 while True:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(args.host, args.port)
+        s.bind((args.host, args.port))
         s.listen()
         conn, addr = s.accept()
         with conn:
