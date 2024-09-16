@@ -22,9 +22,11 @@ def create_packet(version, header_length, service_type, payload):
     # Encode the payload based on the service type
     payload_length = len(payload)
     if service_type == 1:
-        payload = struct.pack('!Q', int(payload))  # 8-byte int
+        #payload = struct.pack('!Q', int(payload))  # 8-byte int
+        payload = payload.encode()
     elif service_type == 2:
-        payload = struct.pack('!d', float(payload))  # 8-byte float 
+       # payload = struct.pack('!d', float(payload))  # 8-byte float 
+        payload = payload.encode()
     elif service_type == 3:
         payload = payload.encode()  # string
     else:
@@ -56,7 +58,19 @@ def unpack_packet(conn, header_format):
     version, header_length, service_type, payload_length = struct.unpack(header_format, header_data)
     # Receive the payload based on the payload length
     payload_data = conn.recv(payload_length)
-    payload = payload_data.decode('utf-8')
+
+    if service_type == 1:
+        payload = payload_data.decode()  # stringpayload = payload.encode()
+        payload = int(payload)
+        #payload = struct.pack('!Q', int(payload))  # 8-byte int
+    elif service_type == 2:
+        payload = payload_data.decode()
+        payload = float(payload)
+        #payload = struct.pack('!d', float(payload))  # 8-byte float 
+    elif service_type == 3:
+        payload = payload.decode()  # string
+    else:
+        raise ValueError("Unsupported service type")
     ##print("payload coming back: ", payload)
 
     

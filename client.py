@@ -7,6 +7,8 @@ import argparse
 import socket
 import struct
 
+
+
 """
 Creates a packet by encoding the payload based on the service type and combining it with a fixed-length header.
 Parameters:
@@ -24,9 +26,11 @@ def create_packet(version, header_length, service_type, payload):
     
     # Encode the payload based on the service type
     if service_type == 1:
-        payload = struct.pack('!Q', int(payload))  # 8-byte int
+        payload = payload.encode()  # stringpayload = payload.encode()
+        #payload = struct.pack('!Q', int(payload))  # 8-byte int
     elif service_type == 2:
-        payload = struct.pack('!d', float(payload))  # 8-byte float 
+        payload = payload.encode()
+        #payload = struct.pack('!d', float(payload))  # 8-byte float 
     elif service_type == 3:
         payload = payload.encode()  # string
     else:
@@ -60,10 +64,22 @@ def handle_packet(data):
     payload_data = data[header_size:]
 
     version, header_length, service_type, payload_length = struct.unpack(header_format, header_data)
-    payload = payload_data.decode('utf-8')
+    
+    if service_type == 1:
+        payload = payload_data.decode()  # stringpayload = payload.encode()
+        payload = int(payload)
+        #payload = struct.pack('!Q', int(payload))  # 8-byte int
+    elif service_type == 2:
+        payload = payload_data.decode()
+        payload = float(payload)
+        #payload = struct.pack('!d', float(payload))  # 8-byte float 
+    elif service_type == 3:
+        payload = payload.decode()  # string
+    else:
+        raise ValueError("Unsupported service type")
 
     print(f"Received packet headers - Version: {version}, Header Length: {header_length}, Service Type: {service_type}, Payload Length: {payload_length-1}")
-    print(f"Received packet payload -{payload}")
+    print(f"Received packet payload - {payload}")
     return version, header_length, service_type, payload_length, payload
 
 if __name__ == '__main__':
@@ -93,5 +109,5 @@ if __name__ == '__main__':
         # Receive the response from the server
         response = s.recv(1024)
         version, header_length, service_type, payload_length, payload = handle_packet(response)
-        if version == args.version and header_length == args.header_length and service_type == args.service_type and payload[1:] == args.payload:
+        if version == args.version and header_length == args.header_length and service_type == args.service_type and str(payload)[1:] == args.payload:
             print("Packet sent successfully (ACK)")
