@@ -74,33 +74,32 @@ if __name__ == '__main__':
 
     # Fixed length header -> Version (1 byte), Header Length (1 byte), Service Type (1 byte), Payload Length (2 bytes)
     header_format = 'BBBB'  # 1 byte for version, header length, service type; 2 bytes for payload length
-while True:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((args.host, args.port))
-        while True:
-            s.listen()
-            conn, addr = s.accept()
-            with conn:
-                print(f"Connected by: {addr}")
-                while True:
-                    try:
-                        # Receive and unpack packet using the unpack_packet function
-                        payload_string = unpack_packet(conn, header_format)
-                        if payload_string:
-                            # Echo back the packet fields
-                            packet_fields = payload_string.split('|')
-                            version = packet_fields[0]
-                            header_length = packet_fields[1]
-                            service_type = packet_fields[2]
-                            payload_length = packet_fields[3]
-                            payload = packet_fields[4]
-                            payload_string = payload_string.encode('utf-8')
-                            print(f"Received packet headers - Version: {version}, Header Length: {header_length}, Service Type: {service_type}, Payload Length: {payload_length}")
-                            print(f"Received packet payload: {payload}")
-                            send_packet = create_packet(int(version), int(header_length), int(service_type), payload)
-                            conn.sendall(send_packet)
-                        else:
-                            break
-                    except Exception as e:
-                        print(f"Connection closed or an error occurred: {e}")
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind((args.host, args.port))
+    while True:
+        s.listen()
+        conn, addr = s.accept()
+        with conn:
+            print(f"Connected by: {addr}")
+            while True:
+                try:
+                    # Receive and unpack packet using the unpack_packet function
+                    payload_string = unpack_packet(conn, header_format)
+                    if payload_string:
+                        # Echo back the packet fields
+                        packet_fields = payload_string.split('|')
+                        version = packet_fields[0]
+                        header_length = packet_fields[1]
+                        service_type = packet_fields[2]
+                        payload_length = packet_fields[3]
+                        payload = packet_fields[4]
+                        payload_string = payload_string.encode('utf-8')
+                        print(f"Received packet headers - Version: {version}, Header Length: {header_length}, Service Type: {service_type}, Payload Length: {payload_length}")
+                        print(f"Received packet payload: {payload}")
+                        send_packet = create_packet(int(version), int(header_length), int(service_type), payload)
+                        conn.sendall(send_packet)
+                    else:
                         break
+                except Exception as e:
+                    print(f"Connection closed or an error occurred: {e}")
+                    break
