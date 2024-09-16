@@ -4,8 +4,10 @@
 # The server unpacks the received packets and echoes back the packet fields to the client. 
 # The server uses the create_packet and unpack_packet functions to create and unpack packets, respectively.
 
+import argparse
 import socket
 import struct
+
 
 """
 create_packet(version, header_length, service_type, payload): Creates a packet by encoding the payload based on the service type and combining it with a fixed-length header.
@@ -65,6 +67,10 @@ def unpack_packet(conn, header_format):
 if __name__ == '__main__':
     host = 'localhost'
     port = 12345
+    parser = argparse.ArgumentParser(description="Server for packet receiving and ACKing.")
+    parser.add_argument('--host', type=str, default='localhost', help='Server host')
+    parser.add_argument('--port', type=int, default=12345, help='Server port')
+
 
     # Fixed length header -> Version (1 byte), Header Length (1 byte), Service Type (1 byte), Payload Length (2 bytes)
     header_format = 'BBBB'  # 1 byte for version, header length, service type; 2 bytes for payload length
