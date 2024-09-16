@@ -18,22 +18,22 @@ Parameters:
         bytes: The packet containing the header and encoded payload.
 """
 def create_packet(version, header_length, service_type, payload):
+     
+    payload = " " + payload # fix for payload cutting off the first character when sent
+    payload_length = len(payload) # Calculate payload length
+    
     # Encode the payload based on the service type
-    payload_length = len(payload)
     if service_type == 1:
-        payload = struct.pack('!h', int(payload))  # 2-byte int
+        payload = struct.pack('!Q', int(payload))  # 8-byte int
     elif service_type == 2:
-        payload = struct.pack('!e', float(payload))  # 2-byte float 
+        payload = struct.pack('!d', float(payload))  # 8-byte float 
     elif service_type == 3:
         payload = payload.encode()  # string
     else:
         raise ValueError("Unsupported service type")
 
-    # Calculate payload length
-    
-
     # Create the fixed-length header
-    header = struct.pack('!BBBB', version, header_length, service_type, payload_length)
+    header = struct.pack('!BBBH', version, header_length, service_type, payload_length)
 
     # Combine header and payload into a single packet
     packet = header + payload
@@ -54,7 +54,7 @@ Extracts the header and payload from the received data.
 def handle_packet(data):
     # Rest of the code...
     # Extract header and payload from the received data
-    header_format = '!BBBB'
+    header_format = '!BBBH'
     header_size = struct.calcsize(header_format)
     header_data = data[:header_size]
     payload_data = data[header_size:]
@@ -82,10 +82,13 @@ if __name__ == '__main__':
 
     # Connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((args.host, args.port))
+        try:
+           s.connect((args.host, args.port)) # make connection to server
 
-        # Send the packet
-        s.sendall(packet)
+           s.sendall(packet) # Send the packet
+        except Exception as e:
+            print(f"Connection closed or an error occurred: {e}")
+            exit(1)
 
         # Receive the response from the server
         response = s.recv(1024)

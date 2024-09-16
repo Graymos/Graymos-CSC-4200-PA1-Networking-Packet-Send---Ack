@@ -22,16 +22,16 @@ def create_packet(version, header_length, service_type, payload):
     # Encode the payload based on the service type
     payload_length = len(payload)
     if service_type == 1:
-        payload = struct.pack('!h', int(payload))  # 2-byte int
+        payload = struct.pack('!Q', int(payload))  # 8-byte int
     elif service_type == 2:
-        payload = struct.pack('!e', float(payload))  # 2-byte float 
+        payload = struct.pack('!d', float(payload))  # 8-byte float 
     elif service_type == 3:
         payload = payload.encode()  # string
     else:
         raise ValueError("Unsupported service type")
 
     # Create the fixed-length header
-    header = struct.pack('!BBBB', version, header_length, service_type, payload_length)
+    header = struct.pack('!BBBH', version, header_length, service_type, payload_length)
 
     # Combine header and payload into a single packet
     packet = header + payload
@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
 
     # Fixed length header -> Version (1 byte), Header Length (1 byte), Service Type (1 byte), Payload Length (2 bytes)
-    header_format = 'BBBB'  # 1 byte for version, header length, service type; 2 bytes for payload length
+    header_format = 'BBBH'  # 1 byte for version, header length, service type; 2 bytes for payload length
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((args.host, args.port))
     while True:
