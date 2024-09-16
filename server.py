@@ -91,11 +91,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         version = packet_fields[0]
                         header_length = packet_fields[1]
                         service_type = packet_fields[2]
-                        payload_length = packet_fields[3]
+                        payload_length = len(packet_fields[4])
                         payload = packet_fields[4]
                         payload_string = payload_string.encode('utf-8')
-                        print(f"Received packet headers - Version: {version}, Header Length: {header_length}, Service Type: {service_type}, Payload Length: {payload_length}")
-                        print(f"Received packet payload - {payload}")
+                        
+                        print(f"Received packet headers - Version: {version}, Header Length: {header_length}, Service Type: {service_type}, Payload Length: {payload_length-1}")
+                        print(f"Received packet payload -{payload}")
                         send_packet = create_packet(int(version), int(header_length), int(service_type), payload)
                         conn.sendall(send_packet)
                     else:

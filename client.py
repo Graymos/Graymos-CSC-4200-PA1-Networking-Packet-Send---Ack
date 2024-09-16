@@ -62,8 +62,8 @@ def handle_packet(data):
     version, header_length, service_type, payload_length = struct.unpack(header_format, header_data)
     payload = payload_data.decode('utf-8')
 
-    print(f"Received packet headers - Version: {version}, Header Length: {header_length}, Service Type: {service_type}, Payload Length: {payload_length}")
-    print(f"Received packet payload - {payload}")
+    print(f"Received packet headers - Version: {version}, Header Length: {header_length}, Service Type: {service_type}, Payload Length: {payload_length-1}")
+    print(f"Received packet payload -{payload}")
     return version, header_length, service_type, payload_length, payload
 
 if __name__ == '__main__':
