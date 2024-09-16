@@ -1,6 +1,7 @@
 # Author: Grayson Mosley
 # Date: 9/15/2024
 # Description: Client for packet creation and sending. 
+# Have --version, --header_length, --service_type, --payload, --host, and --port as arguments for the client.
 
 import argparse
 import socket

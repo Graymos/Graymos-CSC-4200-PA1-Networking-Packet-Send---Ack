@@ -3,6 +3,7 @@
 # Description: This program creates a server that listens for incoming connections and receives packets from clients. 
 # The server unpacks the received packets and echoes back the packet fields to the client. 
 # The server uses the create_packet and unpack_packet functions to create and unpack packets, respectively.
+# Have --host and --port as arguments for the server.
 
 import argparse
 import socket
